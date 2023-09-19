@@ -47,10 +47,6 @@
 
 - `:` — enter Command mode;
 
-- `J` — join the line below with the current one ([j]oin);
-
-- `N` `J` — join `N` lines below with the current one ([j]oin);
-
 - `ZZ` — quit and write/quit and save;
 
 - `ZQ` — quit without writing/quit without saving;
@@ -65,7 +61,13 @@
 
 - `S` — synchronize plugins ([s]ynchronize);
 
-- `gm` — get the output of `:messages` (`:[m]essages`).
+- `gm` — get the output of `:messages` ([g]et `:[m]essages`]);
+
+- `;l` — load the session for `cwd` ([l]oad);
+
+- `s` — start search which narrows the pool of matches on every key press where
+  a key corresponds to a dynamic label, and jump as soon as a match isn’t
+  ambiguous ([s]earch).
 
 ### Motions
 
@@ -215,8 +217,7 @@
 #### Double-Callable
 
 If the actions are called twice, they operate on a line. Their uppercase
-counterparts operate from cursor to the end of the current line, except `Y`
-which also operates on a line.
+counterparts operate from cursor to the end of the current line.
 
 - `d` `motion` — copy and delete `motion` ([d]elete);
 
@@ -354,9 +355,9 @@ which also operates on a line.
 
 - `<c-c>` `motion` — comment `motion` out ([c]omment);
 
-- `s` — start search which narrows the pool of matches on every key press where
-  a key corresponds to a dynamic label, and jump as soon as a match isn’t
-  ambiguous ([s]earch).
+- `J` — join the line below with the current one ([j]oin);
+
+- `N` `J` — join `N` lines below with the current one ([j]oin).
 
 ### Change History
 
