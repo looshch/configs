@@ -35,6 +35,10 @@
 
 - `<c-[>` — go to normal mode.
 
+### Terminal Mode
+
+- `jk` — go to normal mode.
+
 ## Normal Mode
 
 `N` is optional.
@@ -60,6 +64,8 @@
 - `gf` — go to the currently open file location in Finder ([g]o ... [F]inder);
 
 - `S` — synchronize plugins ([s]ynchronize);
+
+- `;l` — load the session for `cwd` ([l]oad);
 
 - `s` — start search which narrows the pool of matches on every key press where
   a key corresponds to a dynamic label, and jump as soon as a match isn’t
@@ -419,13 +425,13 @@ counterparts operate from cursor to the end of the current line.
 
 - `-` — decrease the height ([same key as ‘-’, subtract]);
 
-- `<c-w>=` — equalize all the heights and widths ([equal]);
+- `<c-=>` — equalize all the heights and widths ([equal]);
 
-- `<c-w>_` — maximize the height.
+- `<c-->` — maximize the height.
 
 ### Tabs
 
-- `<space><space>` — search through names;
+- `gt` `name` — to to the tab with name ([g]o ... [t]ab);
 
 - `<space>l` — switch to the next ([right]);
 
@@ -549,4 +555,8 @@ counterparts operate from cursor to the end of the current line.
 
 ## Terminal Mode
 
-- `jk` — exit.
+- `jk` — go to normal mode;
+
+- `<c-n>` — arrow down;
+
+- `<c-p>` — arrow up.

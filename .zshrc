@@ -11,14 +11,14 @@ export HISTSIZE=1000000
 export N_PREFIX="${HOME}/.n"; PATH+=":${N_PREFIX}/bin"
 export EDITOR="v"
 export RIPGREP_CONFIG_PATH="${HOME}/Projects/configs/.rgrc"
-export MANPAGER="nvim +Man!"
+export MANPAGER="nvr --remote-tab +Man! -"
+export EMPTY_FILE="$(mktemp -t empty)"
+export NO_FILE="/dev/null"
 CONFIGS="${HOME}/Projects/configs"
-FPATH="/opt/homebrew/share/zsh-completions:${FPATH}"
 
 alias cdd="cd ${HOME}/dev"
 alias cdc="cd ${CONFIGS}"
 alias cdp="cd ${HOME}/Projects"
-alias v="nvim"
 alias g="git"
 alias l="ls -AlFh"
 alias q="exit"
@@ -36,8 +36,20 @@ alias bi="brew install"
 alias p="git diff head --name-only | xargs -r npx prettier \
 	--prose-wrap=always --single-quote --write"
 
+v() {
+	if (( $# == 0 )); then nvr --remote-tab "${PWD}"
+	else nvr --remote-tab "$@"; fi
+}
+
+chpwd() {
+	nvr --remote-expr "execute('tcd ' . fnameescape('$(pwd)'))" > \
+		/dev/null &!
+}
+
+FPATH="/opt/homebrew/share/zsh-completions:${FPATH}"
 autoload -Uz compinit
 compinit -C
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 alias ys="yarn start"

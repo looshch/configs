@@ -1,3 +1,8 @@
+vim.api.nvim_create_autocmd('FileType', {
+	-- Git waits for all the buffers it has created to be closed.
+	pattern = {'git*'},
+	callback = function() vim.bo.bufhidden = 'delete' end,
+})
 vim.api.nvim_create_autocmd('BufRead', {callback = function()
 	-- Put the cursor on the last known position.
 	vim.fn.setpos('.', vim.fn.getpos '\'"')
@@ -16,12 +21,15 @@ vim.o.ignorecase, vim.o.smartcase = true, true
 vim.o.undofile, vim.o.swapfile = true, false
 vim.o.wrap = false
 vim.o.updatetime = 250
+vim.o.timeoutlen = 400
 vim.o.virtualedit = 'all'
 vim.o.statusline = '%F%M %v'
 vim.opt.clipboard:append 'unnamedplus'
 vim.opt.jumpoptions:append 'view'
 
-vim.keymap.set('i', '<c-l>', '<c-o>l')
+vim.keymap.set('t', 'jk', '<c-\\><c-n>')
+vim.keymap.set('t', '<c-n>', '<down>')
+vim.keymap.set('t', '<c-p>', '<up>')
 vim.keymap.set('n', 'U', '<c-r>')
 vim.keymap.set({'n', 'v'}, '?', function() vim.fn.setreg('/', '') end)
 vim.keymap.set('n', 'yp', function()
@@ -31,7 +39,7 @@ vim.keymap.set('n', 'gf', function() vim.cmd 'silent !open -R %' end)
 vim.keymap.set({'n', 'v'}, '<c-c>', require 'vim._comment'.operator, {
 	expr = true,
 })
-vim.keymap.set('t', 'jk', '<c-\\><c-n>')
+vim.keymap.set('i', '<c-l>', '<c-o>l')
 
 local lazy_path = vim.fn.stdpath 'data'..'/lazy/lazy.nvim'
 if not vim.uv.fs_stat(lazy_path) then vim.fn.system{
@@ -44,6 +52,7 @@ require 'lazy'.setup{
 	'nvim-treesitter/nvim-treesitter',
 
 	{'catppuccin/nvim', version = '1.11.0'},
+	{'sphamba/smear-cursor.nvim', opts = {}},
 	'tpope/vim-sleuth',
 	'stevearc/oil.nvim',
 	'ibhagwan/fzf-lua',
@@ -63,7 +72,7 @@ require 'lazy'.setup{
 	{'folke/ts-comments.nvim', opts = {}},
 	'mbbill/undotree',
 	'tpope/vim-fugitive',
-	{'rmagatti/auto-session', opts = {}},
+	'stevearc/resession.nvim',
 }
 vim.keymap.set('n', 'S', require 'lazy'.sync)
 
@@ -96,8 +105,9 @@ end)
 vim.keymap.set('n', 'gn', require 'fzf-lua'.git_files)
 
 vim.keymap.set('n', 'm', vim.cmd.WinShift)
-for _, direction in ipairs{'h', 'j', 'k', 'l'} do
-vim.keymap.set('n', '<c-'..direction..'>', '<c-w>'..direction) end
+for _, action in ipairs{'h', 'j', 'k', 'l', '='} do
+vim.keymap.set('n', '<c-'..action..'>', '<c-w>'..action) end
+vim.keymap.set('n', '<c-->', '<c-w>_')
 vim.keymap.set('n', ')', function() vim.cmd 'vertical resize +15' end)
 vim.keymap.set('n', '(', function() vim.cmd 'vertical resize -15' end)
 vim.keymap.set('n', '+', function() vim.cmd.resize '+10' end)
@@ -111,11 +121,12 @@ require 'bufferline'.setup{options = {
 	mode = 'tabs',
 	numbers = 'ordinal',
 }}
-vim.keymap.set('n', '  ', require 'fzf-lua'.tabs)
+vim.keymap.set('n', 'gt', require 'fzf-lua'.tabs)
 for index = 1, 9 do
 vim.keymap.set('n', ' '..index, index..'gt') end
 vim.keymap.set('n', ' d', function() vim.cmd 'tab split' end)
 vim.keymap.set('n', ' c', function()
+	if vim.wo.diff then vim.rpcnotify(0, 'Exit', 0) end
 	if vim.bo.buftype == 'terminal' then vim.cmd.windo 'bdelete!'
 	else vim.cmd.tabclose() end
 end)
@@ -133,22 +144,12 @@ vim.keymap.set({'n', 'v'}, 's', function()
 	require 'leap'.leap{target_windows = {vim.fn.win_getid()}}
 end)
 
-local capabilities = require 'cmp_nvim_lsp'.default_capabilities()
-vim.lsp.config('*', {capabilities = capabilities})
-vim.lsp.config.angularls = {cmd = {
-	"ngserver",
-	"--stdio",
-	"--tsProbeLocations",
-	"?/node_modules",
-	"--ngProbeLocations",
-	"/Users/l/.local/share/nvim/mason/packages/angular-language-server/node_modules/@angular/language-server/node_modules",
-	"--angularCoreVersion",
-	"20.1.0"
-}}
+vim.lsp.config('*', {
+	capabilities = require 'cmp_nvim_lsp'.default_capabilities(),
+})
 vim.lsp.config.flow = {filetypes = {'typescriptreact'}}
 vim.lsp.enable('sourcekit')
 require 'mason-lspconfig'.setup{ensure_installed = {
-	'angularls',
 	'ts_ls',
 	'bashls',
 	'jsonls',
@@ -190,3 +191,21 @@ cmp.setup{
 }
 
 vim.keymap.set('n', 'gh', vim.cmd.UndotreeToggle)
+
+require 'resession'.setup{buf_filter = function(bufnr)
+	if vim.bo[bufnr].buftype == 'terminal' then return false end
+	return vim.bo[bufnr].buflisted
+end}
+require 'resession'.add_hook('post_load', function()
+	for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.fn.bufname(bufnr) == '' then
+			vim.api.nvim_buf_delete(bufnr, {})
+		end
+	end
+end)
+vim.keymap.set('n', ';l', function()
+	require 'resession'.load(vim.fn.getcwd(), {
+		reset = false,
+		silence_errors = true,
+	})
+end)
