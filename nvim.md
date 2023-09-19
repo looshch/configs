@@ -431,7 +431,7 @@ counterparts operate from cursor to the end of the current line.
 
 ### Tabs
 
-- `<space><space>` — search through names;
+- `gt` `name` — to to the tab with name ([g]o ... [t]ab);
 
 - `<space>l` — switch to the next ([right]);
 
