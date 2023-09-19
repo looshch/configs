@@ -1,0 +1,10 @@
+font-family = UbuntuMono Nerd Font
+font-size = 12
+theme = catppuccin-mocha
+background = 000000
+cursor-invert-fg-bg = true
+maximize = true
+window-colorspace = display-p3
+window-height = 73
+window-width = 251
+macos-titlebar-style = tabs
