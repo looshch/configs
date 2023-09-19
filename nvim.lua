@@ -16,16 +16,6 @@ vim.api.nvim_create_autocmd('VimLeavePre', {callback = function()
 	require 'resession'.save(vim.fn.getcwd(), {notify = false})
 end})
 
-local font_size_factor = 1.1
-local change_font_size = function(factor)
-	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * factor
-end
-
-vim.g.neovide_scroll_animation_length = 0.1
-vim.g.neovide_hide_mouse_when_typing = true
-vim.g.neovide_fullscreen = true
-
-vim.o.guifont = 'UbuntuMono Nerd Font:h12'
 vim.o.number, vim.o.relativenumber = true, true
 vim.o.ignorecase, vim.o.smartcase = true, true
 vim.o.undofile, vim.o.swapfile = true, false
@@ -48,10 +38,6 @@ vim.keymap.set('n', 'gf', function() vim.cmd 'silent !open -R %' end)
 vim.keymap.set({'n', 'v'}, '<c-c>', require 'vim._comment'.operator, {
 	expr = true,
 })
-vim.keymap.set('n', '<d-=>', function() change_font_size(font_size_factor) end)
-vim.keymap.set('n', '<d-->', function()
-	change_font_size(1/font_size_factor)
-end)
 vim.keymap.set('i', '<c-l>', '<c-o>l')
 -- Enable copying and pasting in Neovide.
 vim.keymap.set('v', '<d-c>', '"+y')
@@ -137,21 +123,20 @@ require 'bufferline'.setup{options = {
 	mode = 'tabs',
 	numbers = 'ordinal',
 }}
-vim.keymap.set('n', 'gt', require 'fzf-lua'.tabs)
+vim.keymap.set('n', '  ', require 'fzf-lua'.tabs)
 for index = 1, 9 do
-vim.keymap.set('n', '<d-'..index..'>', index..'gt') end
-vim.keymap.set('n', '<d-d>', function() vim.cmd 'tab split' end)
-vim.keymap.set({'n', 't'}, '<d-c>', function()
-	vim.rpcnotify(0, 'Exit', 0)
-	if vim.bo.buftype == 'terminal' then vim.cmd 'bdelete!'
+vim.keymap.set('n', ' '..index, index..'gt') end
+vim.keymap.set('n', ' d', function() vim.cmd 'tab split' end)
+vim.keymap.set('n', ' c', function()
+	if vim.bo.buftype == 'terminal' then vim.cmd.windo 'bdelete!'
 	else vim.cmd.tabclose() end
 end)
-vim.keymap.set('n', '<d-r>', function() vim.cmd '.+1,$tabdo :tabclose' end)
-vim.keymap.set('n', '<d-k>', function() vim.cmd.tabmove '+1' end)
-vim.keymap.set('n', '<d-j>', function() vim.cmd.tabmove '-1' end)
-vim.keymap.set('n', '<d-l>', vim.cmd.tabnext)
-vim.keymap.set('n', '<d-h>', vim.cmd.tabprevious)
-vim.keymap.set('n', '<d-t>', function()
+vim.keymap.set('n', ' r', function() vim.cmd '.+1,$tabdo :tabclose' end)
+vim.keymap.set('n', ' k', function() vim.cmd.tabmove '+1' end)
+vim.keymap.set('n', ' j', function() vim.cmd.tabmove '-1' end)
+vim.keymap.set('n', ' l', vim.cmd.tabnext)
+vim.keymap.set('n', ' h', vim.cmd.tabprevious)
+vim.keymap.set('n', ' t', function()
 	vim.cmd 'tab terminal'
 	vim.cmd.startinsert()
 end)

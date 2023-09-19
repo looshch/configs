@@ -69,11 +69,7 @@
 
 - `S` — synchronize plugins ([s]ynchronize);
 
-- `;l` — load the session for `cwd` ([l]oad);
-
-- `<d-=>` — increase font size;
-
-- `<d-->` — decrease font size.
+- `;l` — load the session for `cwd` ([l]oad).
 
 ### Motions
 
@@ -435,25 +431,25 @@ counterparts operate from cursor to the end of the current line.
 
 ### Tabs
 
-- `gt` `name` — to to the tab with name ([g]o ... [t]ab);
+- `<space><space>` — search through names;
 
-- `<d-l>` — switch to the next ([right]);
+- `<space>l` — switch to the next ([right]);
 
-- `<d-h>` — switch to the previous ([left]);
+- `<space>h` — switch to the previous ([left]);
 
-- `<d-N>` — switch to the `N`th where 0 < `N` < 10;
+- `<space>N` — switch to the `N`th where 0 < `N` < 10;
 
-- `<d-d>` — duplicate ([d]uplicate);
+- `<space>d` — duplicate ([d]uplicate);
 
-- `<d-c>` — close ([c]lose);
+- `<space>c` — close ([c]lose);
 
-- `<d-r>` — close all to the right ([r]ight);
+- `<space>r` — close all to the right ([r]ight);
 
-- `<d-k>` — move the current one to the right ([right side of `HJKL`]);
+- `<space>k` — move the current one to the right ([right side of `HJKL`]);
 
-- `<d-j>` — move the current one to the left ([left side of `HJKL`]);
+- `<space>j` — move the current one to the left ([left side of `HJKL`]);
 
-- `<d-t>` — open a new terminal tab.
+- `<space>t` — open a new terminal tab.
 
 ### File Browser
 
