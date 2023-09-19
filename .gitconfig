@@ -3,11 +3,16 @@
 	name = george looshch
 
 [core]
-	editor = nvim
+	editor = nvr --remote-tab-wait
 [diff]
-	tool = nvimdiff
+	tool = nvr
+[difftool "nvr"]
+	cmd = nvr -d "${REMOTE}" "${LOCAL}"
 [merge]
-	tool = nvimdiff
+	tool = nvr
+[mergetool "nvr"]
+	cmd = nvr -d "${REMOTE}" "${BASE}" "${LOCAL}" "${MERGED}" -c \
+		'wincmd J | wincmd ='
 [mergetool]
 	keepBackup = false
 

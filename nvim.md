@@ -61,6 +61,8 @@
 
 - `S` — synchronize plugins ([s]ynchronize);
 
+- `;l` — load the session for `cwd` ([l]oad);
+
 - `s` — start search which narrows the pool of matches on every key press where
   a key corresponds to a dynamic label, and jump as soon as a match isn’t
   ambiguous ([s]earch).
