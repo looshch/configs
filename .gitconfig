@@ -1,0 +1,228 @@
+[user]
+	email = g.looshch@deepriversoft.com
+	name = george looshch
+
+[core]
+	editor = nvr --remote-tab-wait
+[diff]
+	tool = nvr
+[difftool "nvr"]
+	cmd = nvr -d "${REMOTE/"${NO_FILE}"/"${EMPTY_FILE}"}" \
+		"${LOCAL/"${NO_FILE}"/"${EMPTY_FILE}"}"
+[merge]
+	tool = nvr
+[mergetool "nvr"]
+	cmd = nvr -d "${REMOTE}" "${BASE}" "${LOCAL}" "${MERGED}" -c \
+		'wincmd J | wincmd ='
+[mergetool]
+	keepBackup = false
+
+[gpg]
+	format = ssh
+[user]
+	signingkey = ~/.ssh/ed.pub
+[commit]
+	gpgsign = true
+
+[push]
+	autoSetupRemote = true
+
+[pull]
+	rebase = true
+
+[init]
+	defaultBranch = master
+
+[worktree]
+	guessRemote = true
+
+[alias]
+	a  = add
+	ap = a -p
+
+	ac = !git a . && git c
+	acnv = !git a . && git cnv
+	acnnv = !git a . && git cnnv
+	aca = !git a . && git ca
+	acanv = !git a . && git canv
+	acan = !git a . && git can
+	acannv = !git a . && git cannv
+	acanp = !git a . && git canp
+	acanpnv = !git a . && git canpnv
+	acanpf = !git a . && git canpf
+	acanpfnv = !git a . && git canpfnv
+	acap = !git a . && git cap
+	acapnv = !git a . && git capnv
+	acapf = !git a . && git capf
+	acapfnv = !git a . && git capfnv
+	acp = !git a . && git cp
+	acpnv = !git a . && git cpnv
+
+	aclean = clean -f -d
+
+	b = branch
+	bl = b -l
+	bm = b -m
+	bd = b -D
+
+	c = commit -S
+	cnv = c --no-verify
+	cnnv = ca --no-verify
+	ca = c --amend
+	canv = ca --no-verify
+	can = ca --no-edit
+	cannv = can --no-verify
+	canp = !git can && git p
+	canpnv = !git cannv && git pnv
+	canpf = !git can && git pf
+	canpfnv = !git cannv && git pfnv
+	cap = !git ca && git p
+	capnv = !git canv && git pnv
+	capf = !git ca && git pf
+	capfnv = !git canv && git pfnv
+	cp = !git c && git p
+	cpnv = !git cnv && git pnv
+
+	co = checkout
+	cob = co -b
+
+	cl = clone
+	cld = cl --depth 1
+
+	d = difftool
+	ds = d --staged
+
+	dno = diff --name-only
+	dnos = diff --name-only --staged
+
+	h = help
+
+	i = init
+
+	l = log
+
+	mt = mergetool
+
+	p = push
+	pnv = p --no-verify
+	pd = p -d
+	pdnv = pd --no-verify
+	pf = p -f
+	pfnv = pf --no-verify
+	pt = p --tags
+
+	paur = pull --allow-unrelated --rebase
+
+	; Rebase on a branch.
+	r = "!r() { \
+		cur_branch=\"$(git b --show-current)\"; \
+		git co \"$1\"; \
+		git config --local \"branch.$1.remote\" origin; \
+		git config --local \"branch.$1.merge\" \"refs/heads/$1\"; \
+		git pull; \
+		git co \"$cur_branch\"; \
+		git ri \"$1\"; \
+	}; r"
+	ra = rebase --abort
+	rc = rebase --continue
+	ri = rebase -i
+	rir = ri --root
+	; rir preserve date.
+	rirpd = rir --committer-date-is-author-date
+
+	rl = reflog
+
+	rs = restore --staged
+
+	s = status
+
+	sd = st drop
+	sl = st list
+	spo = st pop
+	spu = st push
+	st = stash
+
+	t = tag
+
+	uiau = update-index --assume-unchanged
+	uinau = update-index --no-assume-unchanged
+
+	; Who.
+	w = blame
+
+	; When a file was added.
+	wa = l --diff-filter=A --
+
+	wt = worktree
+	wta = "!a() { \
+		branch=\"$1\"; \
+		case \"$branch\" in \
+			WB-*-*) \
+				ticket=\"${branch#WB-}\"; \
+				ticket=\"${ticket%%-*}\"; \
+				case \"$ticket\" in \
+					''|*[!0-9]*) ;; \
+					*) \
+						common_dir=\"$(git rev-parse --path-format=absolute --git-common-dir)\" || return; \
+						repo_root=\"$(dirname \"$common_dir\")\"; \
+						env_file=\"$repo_root/.env\"; \
+						worktree=\"$repo_root/$ticket\"; \
+						if [ ! -f \"$env_file\" ]; then \
+							echo \"wta: missing $env_file\" >&2; \
+							return 1; \
+						fi; \
+						if ! command -v pnpm >/dev/null 2>&1; then \
+							echo \"wta: pnpm is not available\" >&2; \
+							return 1; \
+						fi; \
+						git fetch origin; \
+						if git show-ref --verify --quiet \"refs/heads/$branch\"; then \
+							git wtae \"$worktree\" \"$branch\"; \
+						elif git show-ref --verify --quiet \"refs/remotes/origin/$branch\"; then \
+							git wtae --no-track -b \"$branch\" \"$worktree\" \"refs/remotes/origin/$branch\" || return; \
+						else \
+							git wtae --no-track -b \"$branch\" \"$worktree\" origin/main; \
+						fi; \
+						git config --local \"branch.$branch.remote\" origin || return; \
+						git config --local \"branch.$branch.merge\" \"refs/heads/$branch\"; \
+						cp \"$env_file\" \"$worktree/.env\"; \
+						(cd \"$worktree\" && pnpm i); \
+						return; \
+						;; \
+				esac; \
+				;; \
+		esac; \
+		before=\"$(git wtl --porcelain)\"; \
+		git wtae \"$@\"; \
+		git wtl --porcelain | while IFS= read -r line; do \
+			case \"$line\" in \
+				'worktree '*) \
+					case \"\n$before\n\" in \
+						*\"\n$line\n\"*) new_worktree= ;; \
+						*) new_worktree=\"${line#worktree }\" ;; \
+					esac; \
+					;; \
+				'branch refs/heads/'*) \
+					if [ -n \"$new_worktree\" ]; then \
+						branch=\"${line#branch refs/heads/}\"; \
+						git config --local \"branch.$branch.remote\" origin; \
+						git config --local \"branch.$branch.merge\" \"refs/heads/$branch\"; \
+					fi; \
+					;; \
+			esac; \
+		done; \
+	}; a"
+	; wta existing [branch].
+	wtae = wt add
+	wtl = wt list
+	wtr = wt remove
+	wtd = "!d() { \
+		unset GIT_DIR; \
+		wt=\"$(git -C \"$1\" rev-parse --show-toplevel)\" || return; \
+		branch=\"$(git -C \"$wt\" branch --show-current)\" || return; \
+		gitdir=\"$(git -C \"$wt\" rev-parse --path-format=absolute --git-common-dir)\" || return; \
+		git -C \"$wt\" worktree remove \"$wt\" || return; \
+		if [ -n \"$branch\" ]; then \
+			git --git-dir=\"$gitdir\" branch -D \"$branch\"; \
+		fi; \
+	}; d"
