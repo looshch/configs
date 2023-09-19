@@ -1,0 +1,121 @@
+[user]
+	email = looshch@loosh.ch
+	name  = george looshch
+
+[core]
+	editor = nvim
+[diff]
+	tool = nvimdiff
+[merge]
+	tool = nvimdiff
+[mergetool]
+	keepBackup = false
+
+[push]
+	autoSetupRemote = true
+
+[alias]
+	a  = add
+	ap = a -p
+
+	ac     = !git a . && git c
+	aca    = !git a . && git ca
+	acan   = !git a . && git can
+	acanp  = !git a . && git canp
+	acanpf = !git a . && git canpf
+	acap   = !git a . && git cap
+	acapf  = !git a . && git capf
+	acp    = !git a . && git cp
+
+	aclean = clean -f -d
+
+	b  = branch
+	bl = b -l
+	bm = b -m
+	bd = b -D
+
+	c     = commit
+	ca    = c --amend
+	can   = ca --no-edit
+	canp  = !git can && git p
+	canpf = !git can && git pf
+	cap   = !git ca && git p
+	capf  = !git ca && git pf
+	cp    = !git c && git p
+
+	co  = checkout
+	cob = co -b
+	cot = co --theirs
+	cou = co --ours
+
+	cl  = clone
+	cld = cl --depth 1
+
+	d  = difftool
+	ds = d --staged
+
+	dcw  = diff --color-words
+	dcws = diff --color-words --staged
+	dno  = diff --name-only
+	dnos = diff --name-only --staged
+
+	h = help
+
+	i = init
+
+	l  = log
+
+	; commits number ranking
+	rank = shortlog -s -n --no-merges
+
+	m  = merge
+	mt = mergetool
+
+	most-used = !git l --pretty=format: --name-only | sort | uniq -c | sort -rg | head -10
+
+	p  = push
+	pd = p -d
+	pf = p -f
+	pt = p --tags
+
+	paur  = pull --allow-unrelated --rebase
+	r     = "!r() { \
+	           CUR_BRANCH="$(git b --show-current)"; \
+	           git co $1; \
+	           git pull; \
+	           git co ${CUR_BRANCH}; \
+	           git ri $1; \
+	         }; r"
+	ra    = rebase --abort
+	rc    = rebase --continue
+	ri    = rebase -i
+	rir   = ri --root
+	; rir preserve date
+	rirpd = rir --committer-date-is-author-date
+
+	rl = reflog
+
+	rs = restore --staged
+
+	s = status
+
+	sd  = st drop
+	sl  = st list
+	spo = st pop
+	spu = st push
+	st  = stash
+
+	t = tag
+
+	uiau  = update-index --assume-unchanged
+	uinau = update-index --no-assume-unchanged
+
+	wa  = worktree add
+	wl  = worktree list
+	wr  = worktree remove
+	wrf = worktree remove -f
+
+	when-added = l --diff-filter=A --
+
+	; who
+	w = blame
