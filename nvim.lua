@@ -1,9 +1,6 @@
-vim.api.nvim_create_autocmd('BufEnter', {
-	pattern = 'term://*',
-	callback = function()
-		vim.bo.bufhidden = 'delete'
-		vim.cmd.startinsert()
-	end,
+vim.api.nvim_create_autocmd('FileType', {
+	pattern = {'git*'},
+	callback = function() vim.bo.bufhidden = 'delete' end,
 })
 vim.api.nvim_create_autocmd('BufRead', {callback = function()
 	-- Put the cursor on the last known position.
@@ -14,19 +11,9 @@ vim.api.nvim_create_autocmd('BufRead', {
 	callback = function() vim.bo.filetype = 'typescriptreact' end,
 })
 vim.api.nvim_create_autocmd('BufWritePre', {command = '%s/\\s\\+$//e'})
-vim.api.nvim_create_autocmd('BufLeave', {
-	pattern = 'term://*',
-	command = 'stopinsert',
-})
-vim.api.nvim_create_autocmd('TermClose', {command = 'bdelete!'})
-vim.api.nvim_create_autocmd('FileType', {
-	pattern = {
-		'gitcommit',
-		'gitrebase',
-		'gitconfig',
-	},
-	callback = function() vim.bo.bufhidden = 'delete' end,
-})
+vim.api.nvim_create_autocmd('VimLeavePre', {callback = function()
+	require 'resession'.save(vim.fn.getcwd(), {notify = false})
+end})
 
 vim.o.number, vim.o.relativenumber = true, true
 vim.o.ignorecase, vim.o.smartcase = true, true
@@ -45,16 +32,9 @@ vim.keymap.set('n', 'yp', function()
 	vim.fn.setreg('*', vim.fn.fnamemodify(vim.fn.expand '%', ':.'))
 end)
 vim.keymap.set('n', 'gf', function() vim.cmd 'silent !open -R %' end)
-vim.keymap.set('n', 'gm', function()
-	local bufnr = vim.api.nvim_create_buf(false, true)
-	vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, vim.split(
-		vim.api.nvim_exec('messages', true),
-		'\n'
-	))
-	vim.api.nvim_buf_set_option(bufnr, 'bufhidden', 'delete')
-	vim.cmd.tabnew()
-	vim.api.nvim_set_current_buf(bufnr)
-end)
+vim.keymap.set({'n', 'v'}, '<c-c>', require 'vim._comment'.operator, {
+	expr = true,
+})
 vim.keymap.set('t', 'jk', '<c-\\><c-n>')
 
 local lazy_path = vim.fn.stdpath 'data'..'/lazy/lazy.nvim'
@@ -68,6 +48,7 @@ require 'lazy'.setup{
 	'nvim-treesitter/nvim-treesitter',
 
 	{'catppuccin/nvim', version = '1.11.0'},
+	{'sphamba/smear-cursor.nvim', opts = {}},
 	'tpope/vim-sleuth',
 	'stevearc/oil.nvim',
 	'ibhagwan/fzf-lua',
@@ -87,7 +68,7 @@ require 'lazy'.setup{
 	{'folke/ts-comments.nvim', opts = {}},
 	'mbbill/undotree',
 	'tpope/vim-fugitive',
-	{'rmagatti/auto-session', opts = {}},
+	'stevearc/resession.nvim',
 }
 vim.keymap.set('n', 'S', require 'lazy'.sync)
 
@@ -141,8 +122,7 @@ vim.keymap.set('n', ' '..index, index..'gt') end
 vim.keymap.set('n', ' d', function() vim.cmd 'tab split' end)
 vim.keymap.set('n', ' c', function()
 	-- Git waits for all the buffers it has created to be closed.
-	if vim.wo.diff or vim.bo.buftype == 'terminal' then
-		vim.cmd.windo 'bdelete!'
+	if vim.wo.diff then vim.cmd.windo 'bdelete!'
 	else vim.cmd.tabclose() end
 end)
 vim.keymap.set('n', ' r', function() vim.cmd '.+1,$tabdo :tabclose' end)
@@ -189,6 +169,15 @@ vim.keymap.set('n', ';f', vim.lsp.buf.format)
 vim.keymap.set('n', ';r', vim.lsp.buf.rename)
 
 local cmp = require 'cmp'
+local get_bufnrs = function()
+	return vim.tbl_filter(
+		function(buf)
+			return vim.fn.buflisted(buf) == 1 and
+			vim.fn.bufloaded(buf) == 1
+		end,
+		vim.api.nvim_list_bufs()
+	)
+end
 cmp.setup{
 	mapping = cmp.mapping.preset.insert{['<cr>'] = cmp.mapping.confirm()},
 	sources = cmp.config.sources{
@@ -196,15 +185,27 @@ cmp.setup{
 		{name = 'path'},
 		{
 			name = 'buffer',
-			option = {get_bufnrs = function()
-				return vim.api.nvim_list_bufs()
-			end},
+			option = {get_bufnrs = get_bufnrs},
 		},
 	},
 }
 
-vim.keymap.set({'n', 'v'}, '<c-c>', require 'vim._comment'.operator, {
-	expr = true,
-})
-
 vim.keymap.set('n', 'gh', vim.cmd.UndotreeToggle)
+
+require 'resession'.setup{buf_filter = function(bufnr)
+	if vim.bo[bufnr].buftype == 'terminal' then return false end
+	return vim.bo[bufnr].buflisted
+end}
+require 'resession'.add_hook('post_load', function()
+	for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.fn.bufname(bufnr) == '' then
+			vim.api.nvim_buf_delete(bufnr, {})
+		end
+	end
+end)
+vim.keymap.set('n', ';l', function()
+	require 'resession'.load(vim.fn.getcwd(), {
+		reset = false,
+		silence_errors = true,
+	})
+end)

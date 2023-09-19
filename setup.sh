@@ -52,6 +52,7 @@ BREW_FORMULAE=(
 	ripgrep
 	fd
 	neovim
+	neovim-remote
 	tree-sitter
 	docker
 	docker-compose
