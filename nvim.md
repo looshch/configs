@@ -425,13 +425,13 @@ counterparts operate from cursor to the end of the current line.
 
 - `-` — decrease the height ([same key as ‘-’, subtract]);
 
-- `<c-w>=` — equalize all the heights and widths ([equal]);
+- `<c-=>` — equalize all the heights and widths ([equal]);
 
-- `<c-w>_` — maximize the height.
+- `<c-->` — maximize the height.
 
 ### Tabs
 
-- `<space><space>` — search through names;
+- `gt` `name` — to to the tab with name ([g]o ... [t]ab);
 
 - `<space>l` — switch to the next ([right]);
 

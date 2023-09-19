@@ -55,6 +55,7 @@ require 'lazy'.setup{
 	'nvim-treesitter/nvim-treesitter',
 
 	{'catppuccin/nvim', version = '1.11.0'},
+	{'sphamba/smear-cursor.nvim', opts = {}},
 	'tpope/vim-sleuth',
 	'stevearc/oil.nvim',
 	'ibhagwan/fzf-lua',
@@ -123,11 +124,12 @@ require 'bufferline'.setup{options = {
 	mode = 'tabs',
 	numbers = 'ordinal',
 }}
-vim.keymap.set('n', '  ', require 'fzf-lua'.tabs)
+vim.keymap.set('n', 'gt', require 'fzf-lua'.tabs)
 for index = 1, 9 do
 vim.keymap.set('n', ' '..index, index..'gt') end
 vim.keymap.set('n', ' d', function() vim.cmd 'tab split' end)
 vim.keymap.set('n', ' c', function()
+	if vim.wo.diff then vim.rpcnotify(0, 'Exit', 0) end
 	if vim.bo.buftype == 'terminal' then vim.cmd.windo 'bdelete!'
 	else vim.cmd.tabclose() end
 end)
