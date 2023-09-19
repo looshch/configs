@@ -71,10 +71,6 @@
   a key corresponds to a dynamic label, and jump as soon as a match isn’t
   ambiguous ([s]earch);
 
-- `<d-=>` — increase font size;
-
-- `<d-->` — decrease font size.
-
 ### Motions
 
 - `h` — a character left ([left]);
@@ -429,31 +425,31 @@ counterparts operate from cursor to the end of the current line.
 
 - `-` — decrease the height ([same key as ‘-’, subtract]);
 
-- `<c-=>` — equalize all the heights and widths ([equal]);
+- `<c-w>=` — equalize all the heights and widths ([equal]);
 
-- `<c-->` — maximize the height.
+- `<c-w>_` — maximize the height.
 
 ### Tabs
 
-- `gt` `name` — to to the tab with name ([g]o ... [t]ab);
+- `<space><space>` — search through names;
 
-- `<d-l>` — switch to the next ([right]);
+- `<space>l` — switch to the next ([right]);
 
-- `<d-h>` — switch to the previous ([left]);
+- `<space>h` — switch to the previous ([left]);
 
-- `<d-N>` — switch to the `N`th where 0 < `N` < 10;
+- `<space>N` — switch to the `N`th where 0 < `N` < 10;
 
-- `<d-d>` — duplicate ([d]uplicate);
+- `<space>d` — duplicate ([d]uplicate);
 
-- `<d-c>` — close ([c]lose);
+- `<space>c` — close ([c]lose);
 
-- `<d-r>` — close all to the right ([r]ight);
+- `<space>r` — close all to the right ([r]ight);
 
-- `<d-k>` — move the current one to the right ([right side of `HJKL`]);
+- `<space>k` — move the current one to the right ([right side of `HJKL`]);
 
-- `<d-j>` — move the current one to the left ([left side of `HJKL`]);
+- `<space>j` — move the current one to the left ([left side of `HJKL`]);
 
-- `<d-t>` — open a new terminal tab.
+- `<space>t` — open a new terminal tab.
 
 ### File Browser
 
