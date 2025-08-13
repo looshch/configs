@@ -427,25 +427,25 @@ counterparts operate from cursor to the end of the current line.
 
 ### Tabs
 
-- `<space><space>` — search through names;
+- `gt` `name` — to to the tab with name ([g]o ... [t]ab);
 
-- `<space>l` — switch to the next ([right]);
+- `<d-l>` — switch to the next ([right]);
 
-- `<space>h` — switch to the previous ([left]);
+- `<d-h>` — switch to the previous ([left]);
 
-- `<space>N` — switch to the `N`th where 0 < `N` < 10;
+- `<d-N>` — switch to the `N`th where 0 < `N` < 10;
 
-- `<space>d` — duplicate ([d]uplicate);
+- `<d-d>` — duplicate ([d]uplicate);
 
-- `<space>c` — close ([c]lose);
+- `<d-c>` — close ([c]lose);
 
-- `<space>r` — close all to the right ([r]ight);
+- `<d-r>` — close all to the right ([r]ight);
 
-- `<space>k` — move the current one to the right ([right side of `HJKL`]);
+- `<d-k>` — move the current one to the right ([right side of `HJKL`]);
 
-- `<space>j` — move the current one to the left ([left side of `HJKL`]);
+- `<d-j>` — move the current one to the left ([left side of `HJKL`]);
 
-- `<space>t` — open a new terminal tab.
+- `<d-t>` — open a new terminal tab.
 
 ### File Browser
 
