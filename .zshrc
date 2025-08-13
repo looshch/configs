@@ -22,7 +22,7 @@ alias cdp="cd ${HOME}/Projects"
 alias g="git"
 alias l="ls -AlFh"
 alias q="exit"
-alias uz="v ${HOME}/.zshrc && source ${HOME}/.zshrc"
+alias uz="v -w ${HOME}/.zshrc && source ${HOME}/.zshrc"
 alias uv="v ${HOME}/.config/nvim/init.lua"
 alias ug="v ${HOME}/.gitconfig"
 alias us="v ${CONFIGS}/setup.sh"
@@ -37,7 +37,8 @@ alias p="git diff head --name-only | xargs -r npx prettier \
 	--prose-wrap=always --single-quote --write"
 
 v() {
-	if (( $# == 0 )); then nvr --remote-tab "${PWD}"
+	if (( "$#" == 0 )); then nvr --remote-tab "${PWD}"
+	elif [[ "$1" = "-w" ]]; then nvr --remote-tab-wait "${@:2}"
 	else nvr --remote-tab "$@"; fi
 }
 
@@ -50,7 +51,7 @@ FPATH="/opt/homebrew/share/zsh-completions:${FPATH}"
 autoload -Uz compinit
 compinit -C
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 
 alias ys="yarn start"
 alias yj="yarn jest"
