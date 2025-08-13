@@ -61,8 +61,6 @@
 
 - `S` — synchronize plugins ([s]ynchronize);
 
-- `gm` — get the output of `:messages` ([g]et `:[m]essages`]);
-
 - `;l` — load the session for `cwd` ([l]oad);
 
 - `s` — start search which narrows the pool of matches on every key press where
@@ -544,7 +542,9 @@ counterparts operate from cursor to the end of the current line.
 
 - `cdo` `command` — execute `command` over quickfix list entries;
 
-- `G` `git-command` — Git integration ([G]it).
+- `G` `git-command` — Git integration ([G]it);
+
+- `f` `buffer-name` — set `buffer-name` for the buffer.
 
 ## Terminal Mode
 

@@ -1,6 +1,6 @@
-vim.api.nvim_create_autocmd('BufEnter', {
-	pattern = 'term://*',
-	command = 'startinsert',
+vim.api.nvim_create_autocmd('FileType', {
+	pattern = {'git*'},
+	callback = function() vim.bo.bufhidden = 'delete' end,
 })
 vim.api.nvim_create_autocmd('BufRead', {callback = function()
 	-- Put the cursor on the last known position.
@@ -15,6 +15,11 @@ vim.api.nvim_create_autocmd('VimLeavePre', {callback = function()
 	require 'resession'.save(vim.fn.getcwd(), {notify = false})
 end})
 
+vim.g.neovide_scroll_animation_length = 0.1
+vim.g.neovide_hide_mouse_when_typing = true
+vim.g.neovide_macos_simple_fullscreen = true
+
+vim.o.guifont = 'UbuntuMono Nerd Font:h12'
 vim.o.number, vim.o.relativenumber = true, true
 vim.o.ignorecase, vim.o.smartcase = true, true
 vim.o.undofile, vim.o.swapfile = true, false
@@ -32,23 +37,21 @@ vim.keymap.set('n', 'yp', function()
 	vim.fn.setreg('*', vim.fn.fnamemodify(vim.fn.expand '%', ':.'))
 end)
 vim.keymap.set('n', 'gf', function() vim.cmd 'silent !open -R %' end)
-vim.keymap.set('n', 'gm', function()
-	local bufnr = vim.api.nvim_create_buf(false, true)
-	vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, vim.split(
-		vim.api.nvim_exec('messages', true),
-		'\n'
-	))
-	vim.bo[bufnr].bufhidden = 'delete'
-	vim.cmd.tabnew()
-	vim.api.nvim_set_current_buf(bufnr)
-end)
 vim.keymap.set('n', ';l', function()
 	require 'resession'.load(vim.fn.getcwd(), {
 		reset = false,
 		silence_errors = true,
 	})
 end)
+vim.keymap.set({'n', 'v'}, '<c-c>', require 'vim._comment'.operator, {
+	expr = true,
+})
 vim.keymap.set('t', 'jk', '<c-\\><c-n>')
+-- Enable copying and pasting in Neovide.
+vim.keymap.set('v', '<d-c>', '"+y')
+vim.keymap.set({'', 'i', 'c', 't'}, '<d-v>', function()
+	vim.api.nvim_paste(vim.fn.getreg '+', true, -1)
+end)
 
 local lazy_path = vim.fn.stdpath 'data'..'/lazy/lazy.nvim'
 if not vim.uv.fs_stat(lazy_path) then vim.fn.system{
@@ -61,7 +64,6 @@ require 'lazy'.setup{
 	'nvim-treesitter/nvim-treesitter',
 
 	{'catppuccin/nvim', version = '1.11.0'},
-	{'sphamba/smear-cursor.nvim', opts = {}},
 	'tpope/vim-sleuth',
 	'stevearc/oil.nvim',
 	'ibhagwan/fzf-lua',
@@ -158,13 +160,31 @@ local lsp = {
 	'bashls',
 	'jsonls',
 	'eslint',
-	'sourcekit',
 	'gopls',
 }
-require 'mason-lspconfig'.setup{ensure_installed = lsp}
+require 'mason-lspconfig'.setup{
+	ensure_installed = lsp,
+	automatic_enable = false,
+}
 local capabilities = require 'cmp_nvim_lsp'.default_capabilities()
 for _, config in ipairs(lsp) do
 require 'lspconfig'[config].setup{capabilities = capabilities} end
+require 'lspconfig'.sourcekit.setup{capabilities = capabilities}
+require 'lspconfig'.angularls.setup{
+	capabilities = capabilities,
+	on_new_config = function(new_config)
+		new_config.cmd = {
+			"ngserver",
+			"--stdio",
+			"--tsProbeLocations",
+			"?/node_modules",
+			"--ngProbeLocations",
+			"/Users/l/.local/share/nvim/mason/packages/angular-language-server/node_modules/@angular/language-server/node_modules",
+			"--angularCoreVersion",
+			"19.2.0"
+		}
+	end,
+}
 require 'lspconfig'.flow.setup{
 	capabilities = capabilities,
 	filetypes = {'typescriptreact'},
@@ -202,10 +222,6 @@ cmp.setup{
 		},
 	},
 }
-
-vim.keymap.set({'n', 'v'}, '<c-c>', require 'vim._comment'.operator, {
-	expr = true,
-})
 
 vim.keymap.set('n', 'gh', vim.cmd.UndotreeToggle)
 
