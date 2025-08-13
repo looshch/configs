@@ -29,9 +29,9 @@ ln -sf "${CONFIGS}" "${HOME}/.config/karabiner"
 CONFIG_NVIM="${HOME}/.config/nvim"
 mkdir -p "${CONFIG_NVIM}"
 ln -sf "${CONFIGS}/nvim.lua" "${CONFIG_NVIM}/init.lua"
-CONFIG_GHOSTTY="${HOME}/.config/ghostty"
-mkdir -p "${CONFIG_GHOSTTY}"
-ln -sf "${CONFIGS}/.ghostty" "${CONFIG_GHOSTTY}/config"
+CONFIG_NEOVIDE="${HOME}/.config/neovide"
+mkdir -p "${CONFIG_NEOVIDE}"
+ln -sf "${CONFIGS}/neovide.toml" "${CONFIG_NEOVIDE}/config.toml"
 
 # Homebrew setup.
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
@@ -55,10 +55,9 @@ BREW_FORMULAE=(
 	neovim-remote
 	tree-sitter
 	docker
-	docker-compose
 )
 BREW_CASKS=(
-	ghostty
+	neovide
 	google-chrome
 	postman
 	telegram
