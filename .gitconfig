@@ -1,6 +1,7 @@
 [user]
-	email = looshch@loosh.ch
+	email = george.looshch@wolt.com
 	name = george looshch
+	signingkey = C23C6F71825075BD
 
 [core]
 	editor = nvr --remote-tab-wait
@@ -17,11 +18,9 @@
 [mergetool]
 	keepBackup = false
 
-[gpg]
-	format = ssh
-[user]
-	signingkey = ~/.ssh/ed.pub
 [commit]
+	gpgsign = true
+[tag]
 	gpgsign = true
 
 [push]

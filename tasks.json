@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Open in Neovide",
+      "type": "process",
+      "command": "nvim",
+      "args": [
+        "--server",
+        "/tmp/nvimsocket",
+        "--remote-expr",
+        "execute(\"lua vim.system{'open', '-a', 'Neovide'}; vim.cmd('tab drop '..'${file}'); vim.fn.setpos('.', {0, ${lineNumber}, ${columnNumber}}); vim.cmd.tcd '${workspaceFolder}'\")"
+      ],
+      "presentation": {
+        "reveal": "never"
+      }
+    }
+  ]
+}
