@@ -61,7 +61,7 @@
 
 - `yp` — yank absolute path ([y]ank ... [p]ath)/copy absolute path;
 
-- `ypp` — yank path ([y]ank [p]ath)/copy path;
+- `yr` — yank relative path ([y]ank [r]elative ...)/copy relative path;
 
 - `gf` — go to the currently open file location in Finder ([g]o ... [F]inder);
 
@@ -71,7 +71,9 @@
 
 - `<d-=>` — increase font size;
 
-- `<d-->` — decrease font size.
+- `<d-->` — decrease font size;
+
+- `<space><space>` — open in Cursor.
 
 ### Motions
 

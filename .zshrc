@@ -21,6 +21,10 @@ for i in {1..5}; do
 done
 alias cdc="cd ${CONFIGS}"
 alias cdp="cd ${HOME}/Projects"
+alias cdot="cd ${HOME}/Projects/ops-tools"
+alias cde="cd ${HOME}/Projects/ops-tools/library/emails"
+alias cdps="cd ${HOME}/Projects/ops-tools/apps/purchases-support"
+alias cdcs="cd ${HOME}/Projects/converse-web-sdk"
 alias g="git"
 alias l="ls -AlFh"
 alias q="exit"
@@ -35,8 +39,8 @@ alias ub="brew update \
 	&& brew autoremove \
 	&& brew cleanup --prune=all"
 alias bi="brew install"
-alias p="git diff head --name-only | xargs -r npx prettier \
-	--prose-wrap=always --single-quote --write"
+alias p="pnpm"
+alias pbw="p build:watch"
 
 v() {
 	if (( "$#" == 0 )); then nvr --remote-tab "${PWD}"
@@ -55,3 +59,11 @@ autoload -Uz compinit
 compinit -C
 
 [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+
+export GPG_TTY=$(tty)
+
+export PNPM_HOME="/Users/l/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac

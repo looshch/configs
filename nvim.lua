@@ -1,6 +1,5 @@
+if not vim.g.vscode then
 vim.api.nvim_create_autocmd('FileType', {
-	-- Git waits for all the buffers it has created to be closed.
-	pattern = 'git*',
 	callback = function() vim.bo.bufhidden = 'delete' end,
 })
 vim.api.nvim_create_autocmd('BufRead', {callback = function()
@@ -11,6 +10,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
 	pattern = '*',
 	command = 'silent! checktime',
 })
+end
 vim.api.nvim_create_autocmd('BufWritePre', {command = '%s/\\s\\+$//e'})
 
 local font_size_factor = 1.1
@@ -48,10 +48,12 @@ vim.keymap.set({'n', 'v'}, '?', function() vim.fn.setreg('/', '') end)
 vim.keymap.set('n', 'yp', function()
 	vim.fn.setreg('*', vim.fn.expand '%:p')
 end)
-vim.keymap.set('n', 'ypp', function()
+vim.keymap.set('n', 'yr', function()
 	vim.fn.setreg('*', vim.fn.expand '%:.')
 end)
-vim.keymap.set('n', 'gf', function() vim.cmd 'silent !open -R %' end)
+vim.keymap.set('n', 'gf', function()
+	vim.system{'open', '-R', vim.api.nvim_buf_get_name(0)}
+end)
 vim.keymap.set({'n', 'v'}, '<c-c>', require 'vim._comment'.operator, {
 	expr = true,
 })
@@ -66,8 +68,9 @@ vim.keymap.set({'', 'i', 'c', 't'}, '<d-v>', function()
 	vim.api.nvim_paste(vim.fn.getreg '+', true, -1)
 end)
 
+if vim.g.vscode then return end
 local lazy_path = vim.fn.stdpath 'data'..'/lazy/lazy.nvim'
-if not vim.uv.fs_stat(lazy_path) then vim.fn.system{
+if not vim.uv.fs_stat(lazy_path) then vim.system{
 	'git', 'clone', '--depth=1', '--filter=blob:none',
 	'https://github.com/folke/lazy.nvim.git', lazy_path,
 } end
@@ -158,7 +161,8 @@ vim.keymap.set('n', '<d-'..index..'>', index..'gt') end
 vim.keymap.set('n', '<d-d>', function() vim.cmd 'tab split' end)
 vim.keymap.set({'n', 't'}, '<d-c>', function()
 	vim.rpcnotify(0, 'Exit', 0)
-	if vim.bo.buftype == 'terminal' then vim.cmd 'bdelete!'
+	if vim.bo.buftype == 'terminal' then
+		vim.api.nvim_buf_delete(0, {force = true})
 	else vim.cmd.tabclose() end
 end)
 vim.keymap.set('n', '<d-r>', function() vim.cmd '.+1,$tabdo :tabclose' end)
@@ -171,12 +175,12 @@ vim.keymap.set('n', '<d-t>', function()
 	vim.cmd.startinsert()
 	vim.api.nvim_buf_set_name(
 		0,
-		vim.fn.getcwd()..' ('..vim.api.nvim_get_current_tabpage()..')'
+		vim.uv.cwd()..' ('..vim.api.nvim_get_current_tabpage()..')'
 	)
 end)
 
 vim.keymap.set({'n', 'v'}, 's', function()
-	require 'leap'.leap{target_windows = {vim.fn.win_getid()}}
+	require 'leap'.leap{target_windows = {vim.api.nvim_get_current_win()}}
 end)
 
 require 'mason-lspconfig'.setup{ensure_installed = {
@@ -202,10 +206,22 @@ require 'blink.cmp'.setup{keymap = {preset = 'enter'}}
 
 vim.keymap.set('n', 'gh', vim.cmd.UndotreeToggle)
 
-require 'auto-session'.setup{pre_save_cmds = {function()
-	for _, b in ipairs(vim.api.nvim_list_bufs()) do
-		if vim.bo[b].buftype == 'terminal' then
-			vim.api.nvim_buf_delete(b, {force = true})
+require 'auto-session'.setup{
+	single_session_mode = true,
+	pre_save_cmds = {function()
+		for _, b in ipairs(vim.api.nvim_list_bufs()) do
+			if vim.bo[b].buftype == 'terminal'
+				or #vim.fn.win_findbuf(b) == 0 then
+				vim.api.nvim_buf_delete(b, {force = true})
+			end
 		end
-	end
-end}}
+	end},
+}
+
+vim.keymap.set('n', '  ', function()
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	vim.system{
+		'open',
+		'cursor://file'..vim.api.nvim_buf_get_name(0)..':'..row..':'..col+1
+	}
+end)

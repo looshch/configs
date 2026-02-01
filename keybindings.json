@@ -1,0 +1,12 @@
+[
+  {
+    "key": "cmd+i",
+    "command": "composerMode.agent"
+  },
+  {
+    "command": "workbench.action.tasks.runTask",
+    "key": "space space",
+    "args": "Open in Neovide",
+    "when": "editorTextFocus && neovim.mode != insert"
+  }
+]
