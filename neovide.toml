@@ -1,1 +1,1 @@
-neovim-bin = "source ~/.zshrc && nvim +terminal +\"file ${PWD}\""
+neovim-bin = "source ~/.zshrc && nvim --listen /tmp/nvimsocket +terminal +\"file ${PWD}\""
